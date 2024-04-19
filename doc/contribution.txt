@@ -1,0 +1,19 @@
+// Group 29 SER 502 Final Project
+
+contribution:
+Research For the project:- Darsh, Jinesh, Sarath, Sultan, William
+We have collectively worked and discussed over the project.
+
+
+Darsh Maniar - 20%
+Jinesh Patel - 20%
+Sarath Kumar Dunga - 20%
+William Huang - 20%
+Sultan Alneif - 20%
+
+
+Grammar and Syntax:- Darsh , Jinesh, Sarath, William
+Parsing Techniques and Tools, Data Structures:- Sarath, William, Sultan
+Design:- Sultan, William
+Compilation and Running environment:- Sultan, William
+Sample Programs, Darsh, Jinesh, Sarath, William
