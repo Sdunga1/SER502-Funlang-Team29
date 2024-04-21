@@ -1,0 +1,9 @@
+var age=21;
+if(age>=21)
+{
+print("Eligible to go top club");
+}
+else
+{
+print("Not Eligible to go top club");
+}
