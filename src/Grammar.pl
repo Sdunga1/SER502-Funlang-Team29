@@ -7,6 +7,7 @@ block : (statement | printStatement)* ;
 statement : assignment
           | unaryOperation
           | ifCheck
+          | ternaryOperation
           | forLoop
           | forInRangeLoop
           | performWhile
@@ -20,8 +21,9 @@ statement : assignment
 
 assignment : identifier = expression ;
 unaryOperation : identifier inc_dec_op ;
-
 ifCheck : 'if' '(' expression ')' '{' block '}' ('else' '{' block '}')? ;
+% Added missing ternary Operator grammar
+ternaryOperation : 'if' '(' expression ')' '?' expression ':' expression ';' ;
 forLoop : 'for' '(' assignment expression ';' unaryOperation ')' '{' block '}' ;
 forInRangeLoop : 'for' identifier 'in' 'range' '(' expression ',' expression ')' '{' block '}' ;
 performWhile : 'while' '(' expression ')' '{' block '}' ;
