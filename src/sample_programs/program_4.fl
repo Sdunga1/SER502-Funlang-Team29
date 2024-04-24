@@ -1,0 +1,5 @@
+var person={"name":"Darsh","age":22};
+for var key in person
+{
+print(key+ ": "+person[key]);
+}
