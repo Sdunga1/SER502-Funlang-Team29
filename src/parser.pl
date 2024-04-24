@@ -12,6 +12,10 @@ declaration(t_var(X, Y)) --> ['var'], identifier(X), ['='], number(Y).
 declaration(t_var(X, Y)) --> ['var'], identifier(X), ['='], expression(Y).
 declaration(t_var(X, Y)) --> ['var'], identifier(X), ['='], list(Y).
 
+%MODIFY3
+% Function declaration rule
+declaration(t_func(Name, Params, Body)) --> ['func'], identifier(Name), ['('], parameters(Params), [')'], ['{'], block(Body), ['}'].
+
 list(t_list(X)) --> ['['], numbers_list(X), [']'].
 
 numbers_list([X]) --> number(X).
@@ -28,6 +32,10 @@ command(t_ternary(Cond, TrueCase, FalseCase)) --> ['('], boolean(Cond), [')'], [
 command(t_while(X,Y)) --> ['while'],['('], boolean(X), [')'], ['{'], commands(Y),['}'].
 command(t_print(X)) --> ['print'],['('], statement(X), [')'], [';'].
 command(t_for(Var, X, Y, Cmd)) --> ['for'], declaration(Var), ['in', 'range', '('], number(X), [','], number(Y), [')'], ['{'], commands(Cmd), ['}'].
+%MODIFY4
+% Function call rule
+command(t_func_call(Name, Args)) --> identifier(Name), ['('], arguments(Args), [')'], [';'].
+
 
 command(Cmd) --> block(Cmd).
 
@@ -35,9 +43,13 @@ statement(X) --> expression(X); boolean(X).
 
 boolean(b(boolValue(true))) --> ['true'].
 boolean(b(boolValue(false))) --> ['false'].
-boolean(t_equal(X, Y)) --> expression(X), ['='], expression(Y).
-boolean(t_greaterThan(X, Y)) --> expression(X), ['>='], expression(Y).
-boolean(t_lessThan(X,Y)) --> expression(X), ['<='], expression(Y).
+%MODIFY1
+boolean(t_equal(X, Y)) --> expression(X), ['=='], expression(Y).
+%MODIFY2 - added < than and > than cases.
+boolean(t_greaterThan(X, Y)) --> expression(X), ['>'], expression(Y).
+boolean(t_greaterThanEqualTo(X, Y)) --> expression(X), ['>='], expression(Y).
+boolean(t_lessThan(X,Y)) --> expression(X), ['<'], expression(Y).
+boolean(t_lessThanEqualTo(X,Y)) --> expression(X), ['<='], expression(Y).
 boolean(t_not(X)) --> ['not'], boolean(X).
 
 expression(t_add(X,Y)) --> identifier(X),['+'],expression(Y).
@@ -64,3 +76,13 @@ all_alpha([H|T]) :- char_type(H, alpha), all_alpha(T).
 digit(D) --> [C], { atom(C), atom_number(C, D), D >= 0, D =< 9 }.
 number(num(N)) --> [A], { atom(A), atom_number(A, N) }.
 
+%MODIFY5
+% Rule for Paramsetres
+parameters([Par | Rem]) --> identifier(Par), [','], parameters(Rem).
+parameters([Par]) --> identifier(Par).
+parameters([]) --> [].
+%MODIFY6
+% rule for arguments
+arguments([Arg | Rem]) --> expression(Arg), [','], arguments(Rem).
+arguments([Arg]) --> expression(Arg).
+arguments([]) --> [].
