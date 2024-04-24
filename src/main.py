@@ -1,4 +1,3 @@
-
 from pyswip import Prolog
 from tokenize import *
 
@@ -23,3 +22,7 @@ filename = 'sample_programs/program_2.fl'
 print('\nParse tree for program 2:\n', generate_parse_tree(filename))
 filename = 'sample_programs/program_3.fl'
 print('\nParse tree for program 3:\n', generate_parse_tree(filename))
+filename = 'sample_programs/program_4.fl'
+print('\nParse tree for program 4:\n', generate_parse_tree(filename))
+filename = 'sample_programs/program_5.fl'
+print('\nParse tree for program 5:\n', generate_parse_tree(filename))

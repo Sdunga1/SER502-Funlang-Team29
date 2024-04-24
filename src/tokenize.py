@@ -2,20 +2,21 @@ import re
 
 def tokenize_code(code):
     token_patterns = [
-        ('VAR', r'var'),
-        ('IDENTIFIER', r'[a-zA-Z_]\w*'),
-        ('NUMBER', r'\d+'),
+        ('VAR', r'\bvar\b'),
+        ('IDENTIFIER', r'\b[a-zA-Z_]\w*\b'),
+        ('NUMBER', r'\b\d+\b'),
         ('OPERATOR', r'[+\-*/=]'),
         ('SEMICOLON', r';'),
         ('LPAREN', r'\('),
         ('RPAREN', r'\)'),
-        ('QUOTED_STRING', r'"([^"]*?)"'), 
+        ('QUOTED_STRING', r'"[^"]*"'),
         ('CURLY_OPEN', r'{'),
         ('CURLY_CLOSE', r'}'),
         ('SQUARE_OPEN', r'\['),
         ('SQUARE_CLOSE', r'\]'),
         ('COMMA', r','),
         ('COLON', r':'),
+        ('GTHAN', r'>=') ## do the rest <=, <, >, etc.!!!
     ]
 
     patterns = '|'.join(f'(?P<{name}>{pattern})' for name, pattern in token_patterns)
@@ -26,8 +27,7 @@ def tokenize_code(code):
         token_type = match.lastgroup
         token_value = match.group()
         if token_type == 'QUOTED_STRING':
-            words = re.findall(r'\b\w+\b', token_value)
-            tokens.extend(['"'] + words + ['"'])
+            tokens.extend(['"', match.group(0)[1:-1], '"'])
         else:
             tokens.append(token_value)
 
@@ -56,5 +56,20 @@ if __name__ == "__main__":
     filename = 'sample_programs/program_3.fl' 
     code = read_from_file(filename)
 
+
     tokens = tokenize_code(code)
     print('\nTokens for program_3: ', tokens)
+
+    filename = 'sample_programs/program_4.fl' 
+    code = read_from_file(filename)
+
+
+    tokens = tokenize_code(code)
+    print('\nTokens for program_4: ', tokens)
+
+    filename = 'sample_programs/program_5.fl' 
+    code = read_from_file(filename)
+
+    tokens = tokenize_code(code)
+    print('\nTokens for program_5: ', tokens)
+
