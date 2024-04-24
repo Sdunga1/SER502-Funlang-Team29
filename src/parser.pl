@@ -23,6 +23,8 @@ commands(Cmd) --> command(Cmd).
 command(t_assign(X,Y)) --> identifier(X), ['='], expression(Y).
 command(t_if(X, Y)) --> ['if'],['('], boolean(X), [')'], ['{'], commands(Y),['}'].
 command(t_if_else(X, Y, Z)) --> ['if'],['('], boolean(X), [')'], ['{'], commands(Y),['}'], ['else'],['{'], commands(Z),['}'].
+% Ternary Operator
+command(t_ternary(Cond, TrueCase, FalseCase)) --> ['('], boolean(Cond), [')'], ['?'], commands(TrueCase), [':'], commands(FalseCase), [;].
 command(t_while(X,Y)) --> ['while'],['('], boolean(X), [')'], ['{'], commands(Y),['}'].
 command(t_print(X)) --> ['print'],['('], statement(X), [')'], [';'].
 command(t_for(Var, X, Y, Cmd)) --> ['for'], declaration(Var), ['in', 'range', '('], number(X), [','], number(Y), [')'], ['{'], commands(Cmd), ['}'].

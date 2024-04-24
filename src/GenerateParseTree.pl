@@ -41,6 +41,11 @@ if_check(if(Cond, TrueBlock, MaybeElseBlock)) -->
 else_clause(none) --> [].
 else_clause(else(Block)) --> ['else'], ['{'], block(Block), ['}'].
 
+ternary_Operator(ternary(Cond, TrueCase, FalseCase)) -->
+    ['('], expression(Cond), [')'], ['?'],
+    expression(TrueCase), [':'],
+    expression(FalseCase), [';'].
+
 
 for_loop(for(Init, Cond, Incr, Body)) --> 
     ['for'], ['('], assignment(Init), expression(Cond), [';'], unary_operation(Incr), [')'], 
