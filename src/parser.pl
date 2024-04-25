@@ -61,12 +61,12 @@ params([X|Xs]) --> identifier(X), [','], params(Xs); number(X), [','], params(Xs
 
 list(t_list(X)) --> ['['], numbers_list(X), [']'].
 
-numbers_list(X) --> number(X).
-numbers_list([X|Xs]) --> number(X), [','], numbers_list(Xs).
+numbers_list([X]) --> expression(X).
+numbers_list([X|Xs]) --> expression(X), [','], numbers_list(Xs).
 
 dict(t_dict(X)) --> ['{'], dict_pairs(X), ['}'].
 
-dict_pairs(X) --> dict_pair(X).
+dict_pairs([X]) --> dict_pair(X).
 dict_pairs([X|Xs]) --> dict_pair(X), [','], dict_pairs(Xs).
 
 dict_pair(t_pair(X, Y)) --> quoted_string(X), [':'], dict_value(Y).
