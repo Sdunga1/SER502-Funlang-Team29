@@ -1,4 +1,4 @@
 func calcBMI (w, h) {
 print(w / (h * h));
 }
-calcBMI(70, 180);
+func calcBMI(70, 180);

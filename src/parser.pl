@@ -1,7 +1,6 @@
 program(t_program(K)) --> block(K).
 
 block(t_block(D)) --> declarations(D).
-
 block(t_block(D, C)) --> declarations(D), commands(C).
 
 declarations(t_decl(D1, D2)) --> declaration(D1), declarations(D2).
@@ -12,8 +11,7 @@ declaration(t_var(X)) --> ['var'], identifier(X), [';'].
 declaration(t_bool(X)) --> ['bool'], identifier(X), [';'].
 declaration(t_var(X, Y)) --> ['var'], identifier(X), ['='], expression(Y), [';'].
 declaration(t_bool(X, Y)) --> ['bool'], identifier(X), ['='], boolean(Y), [';'].
-declaration(t_var(X, Y)) --> ['var'], identifier(X), ['='], statement(Y), [';'].
-declaration(t_var(X, Y)) --> ['var'], identifier(X), ['='], list(Y), [';'].
+declaration(t_list(X, Y)) --> ['var'], identifier(X), ['='], list(Y), [';'].
 declaration(t_func(X, Y, Z)) --> ['func'], identifier(X), ['('], params(Y), [')'], ['{'], commands(Z), ['}'].
 declaration(t_dict(X, Y)) --> ['var'], identifier(X), ['='], dict(Y), [';'].
 
@@ -24,12 +22,12 @@ command(t_b_assign(X, Y)) --> identifier(X), ['='], boolean(b(boolValue(Y))), ['
 command(t_assign(X,Y)) --> identifier(X), ['='], expression(Y), [';'].
 command(t_if(X, Y)) --> ['if'],['('], boolean(X), [')'], ['{'], commands(Y),['}'].
 command(t_if_else(X, Y, Z)) --> ['if'],['('], boolean(X), [')'], ['{'], commands(Y),['}'], ['else'],['{'], commands(Z),['}'].
-command(t_ternary(X, Y, Z)) --> ['('], boolean(X), [')'], ['?'], commands(Y), [':'], commands(Z), [;].
+command(t_ternary(Cond, TrueCase, FalseCase)) --> ['('], boolean(Cond), [')'], ['?'], commands(TrueCase), [':'], commands(FalseCase), [;].
 command(t_while(X,Y)) --> ['while'],['('], boolean(X), [')'], ['{'], commands(Y),['}'].
 command(t_print(X)) --> ['print'],['('], statement(X), [')'], [';'].
 command(t_for(X, Y, Z, C)) --> ['for'], ['var'], identifier(X), ['in'], ['range'], ['('], number(Y), [','], number(Z), [')'], ['{'], commands(C), ['}'].
 command(t_for_dict(X,Y, C)) --> ['for'], ['var'], identifier(X), ['in'], identifier(Y), ['{'], commands(C), ['}'].
-command(t_func(X, Y)) --> identifier(X), ['('], params(Y), [')'], [';'].
+command(t_func(X, Y)) --> ['func'], identifier(X), ['('], params(Y), [')'], [';'].
 
 statement(X) --> expression(X); boolean(X).
 
@@ -53,17 +51,16 @@ expression(t_div(X,Y)) --> number(X),['/'],expression(Y).
 expression(t_index(L, I)) --> identifier(L), ['['], expression(I), [']'].
 expression(X) --> identifier(X).
 expression(X) --> number(X).
-expression(X) --> ['"'], string_literal(X), ['"'].
 expression(X) --> ['('], expression(X), [')'].
 
-string_literal(X) --> string_chars(L), { atomics_to_string(L, ' ', X) }.
+string_literal(t_string(X)) --> string_chars(L), { atomics_to_string(L, ' ', X) }.
 string_chars([X|Xs]) --> [X], { X \= '"' }, string_chars(Xs).
 string_chars([]) --> [].
 
 params([X]) --> identifier(X); number(X).
 params([X|Xs]) --> identifier(X), [','], params(Xs); number(X), [','], params(Xs).
 
-list(t_list(X)) --> ['['], numbers_list(X), [']'].
+list((X)) --> ['['], numbers_list(X), [']'].
 
 numbers_list([X]) --> expression(X).
 numbers_list([X|Xs]) --> expression(X), [','], numbers_list(Xs).
@@ -91,5 +88,3 @@ all_alpha([H|T]) :- char_type(H, alpha), all_alpha(T).
 
 digit(D) --> [C], { atom(C), atom_number(C, D), D >= 0, D =< 9 }.
 number(num(N)) --> [A], { atom(A), atom_number(A, N) }.
-
-
