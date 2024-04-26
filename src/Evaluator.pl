@@ -12,7 +12,7 @@ eval_declarations(t_decl(Decls, Rest), EnvIn, EnvOut) :-
     eval_declaration(Decls, EnvIn, EnvMid),
     eval_declarations(Rest, EnvMid, EnvOut).
 
-eval_declaration(t_list(t_id(Var), (Items)), Env, UpdatedEnv) :-
+eval_declaration(t_list(t_id(Var), Items), Env, UpdatedEnv) :-
     eval_list(Items, Env, EvaluatedItems),
     update_env(Var, EvaluatedItems, Env, UpdatedEnv).
 
@@ -28,6 +28,9 @@ eval_declaration(t_bool(t_id(Var), Expr), Env, UpdatedEnv) :-
 
 eval_declaration(t_bool(t_id(Var)), Env, UpdatedEnv) :-
     update_env(Var, 0, Env, UpdatedEnv).
+
+eval_declaration(t_func(t_id(Var), Params, Cmds), Env, UpdatedEnv) :-
+    update_env(Var, (Params, Cmds, Env), Env, UpdatedEnv).
 
 eval_commands(t_cmd(Command), EnvIn, EnvOut) :-
     eval_command(Command, EnvIn, EnvOut).
@@ -64,14 +67,31 @@ eval_command(t_for(t_id(X), num(Start), num(End), Cmds), EnvIn, EnvOut) :-
     	EnvOut = EnvIn 
     ).
 
-eval_expression(t_add(t_id(X), t_id(Y)), Env, Val) :-
-    lookup(X, Env, ValX),
-    lookup(Y, Env, ValY),
-    Val is ValX + ValY.
+eval_command(t_func(t_id(FuncName), ArgExpressions), EnvIn, EnvOut) :-
+    lookup(FuncName, EnvIn, (Params, Cmds, ClosureEnv)),
+    eval_arg_expressions(ArgExpressions, EnvIn, ArgValues),
+    assign_params_to_env(Params, ArgValues, ClosureEnv, NewEnv),
+    eval_commands(Cmds, NewEnv, EnvOut).
 
-eval_expression(t_add(t_id(X), num(Y)), Env, Val) :-
-    lookup(X, Env, ValX),
-    Val is ValX + Y.
+eval_expression(t_add(Expr1, Expr2), Env, Val) :-
+    eval_expression(Expr1, Env, Val1),
+    eval_expression(Expr2, Env, Val2),
+    Val is Val1 + Val2.
+
+eval_expression(t_sub(Expr1, Expr2), Env, Val) :-
+    eval_expression(Expr1, Env, Val1),
+    eval_expression(Expr2, Env, Val2),
+    Val is Val1 - Val2.
+
+eval_expression(t_mul(Expr1, Expr2), Env, Val) :-
+    eval_expression(Expr1, Env, Val1),
+    eval_expression(Expr2, Env, Val2),
+    Val is Val1 * Val2.
+
+eval_expression(t_div(Expr1, Expr2), Env, Val) :-
+    eval_expression(Expr1, Env, Val1),
+    eval_expression(Expr2, Env, Val2),
+    (Val2 =:= 0; Val is Val1 / Val2).
 
 eval_expression(t_id(Var), Env, Value) :-
     lookup(Var, Env, Value).
@@ -115,6 +135,16 @@ eval_list([], _, []).
 eval_list([H|T], Env, [HVal|TVal]) :-
     eval_expression(H, Env, HVal),
     eval_list(T, Env, TVal).
+
+eval_arg_expressions([], _, []).
+eval_arg_expressions([H|T], Env, [HVal|TVal]) :-
+    eval_expression(H, Env, HVal),
+    eval_arg_expressions(T, Env, TVal).
+
+assign_params_to_env([], [], Env, Env).
+assign_params_to_env([t_id(P)|PT], [V|VT], Env, UpdatedEnv) :-
+    update_env(P, V, Env, TempEnv),
+    assign_params_to_env(PT, VT, TempEnv, UpdatedEnv).
 
 lookup(Var, [(Var, Val)|_], Val).
 lookup(Var, [_|Rest], Val) :-
