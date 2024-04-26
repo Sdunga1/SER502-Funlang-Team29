@@ -27,7 +27,7 @@ command(t_while(X,Y)) --> ['while'],['('], boolean(X), [')'], ['{'], commands(Y)
 command(t_print(X)) --> ['print'],['('], statement(X), [')'], [';'].
 command(t_for(X, Y, Z, C)) --> ['for'], ['var'], identifier(X), ['in'], ['range'], ['('], number(Y), [','], number(Z), [')'], ['{'], commands(C), ['}'].
 command(t_for_dict(X,Y, C)) --> ['for'], ['var'], identifier(X), ['in'], identifier(Y), ['{'], commands(C), ['}'].
-command(t_func(X, Y)) --> identifier(X), ['('], params(Y), [')'], [';'].
+command(t_func(X, Y)) --> ['func'], identifier(X), ['('], params(Y), [')'], [';'].
 
 statement(X) --> expression(X); boolean(X).
 
