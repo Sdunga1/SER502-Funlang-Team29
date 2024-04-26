@@ -31,14 +31,16 @@ command(t_func(X, Y)) --> ['func'], identifier(X), ['('], params(Y), [')'], [';'
 
 statement(X) --> expression(X); boolean(X).
 
-boolean(b(boolValue(true))) --> ['true'].
-boolean(b(boolValue(false))) --> ['false'].
+boolean((true)) --> ['true'].
+boolean((false)) --> ['false'].
 boolean(t_equal(X, Y)) --> expression(X), ['=='], expression(Y).
 boolean(t_greaterThan(X, Y)) --> expression(X), ['>'], expression(Y).
 boolean(t_greaterThanEqualTo(X, Y)) --> expression(X), ['>='], expression(Y).
 boolean(t_lessThan(X,Y)) --> expression(X), ['<'], expression(Y).
 boolean(t_lessThanEqualTo(X,Y)) --> expression(X), ['<='], expression(Y).
-boolean(t_not(X)) --> ['not'], boolean(X).
+boolean(t_not(X)) --> ['not'], statement(X).
+boolean(t_and(X, Y)) --> identifier(X), ['and'], identifier(Y).
+boolean(t_or(X, Y)) --> identifier(X), ['or'], identifier(Y).
 
 expression(t_add(X,Y)) --> identifier(X),['+'],expression(Y).
 expression(t_add(X,Y)) --> number(X),['+'],expression(Y).
@@ -51,6 +53,7 @@ expression(t_div(X,Y)) --> number(X),['/'],expression(Y).
 expression(t_index(L, I)) --> identifier(L), ['['], expression(I), [']'].
 expression(X) --> identifier(X).
 expression(X) --> number(X).
+%expression(X) --> ['"'], string_literal(X), ['"'].
 expression(X) --> ['('], expression(X), [')'].
 
 string_literal(t_string(X)) --> string_chars(L), { atomics_to_string(L, ' ', X) }.
@@ -65,7 +68,7 @@ list((X)) --> ['['], numbers_list(X), [']'].
 numbers_list([X]) --> expression(X).
 numbers_list([X|Xs]) --> expression(X), [','], numbers_list(Xs).
 
-dict(t_dict(X)) --> ['{'], dict_pairs(X), ['}'].
+dict((X)) --> ['{'], dict_pairs(X), ['}'].
 
 dict_pairs([X]) --> dict_pair(X).
 dict_pairs([X|Xs]) --> dict_pair(X), [','], dict_pairs(Xs).

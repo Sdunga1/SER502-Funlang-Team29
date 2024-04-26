@@ -24,10 +24,15 @@ eval_declaration(t_var(t_id(Var)), Env, UpdatedEnv) :-
     update_env(Var, 0, Env, UpdatedEnv).
 
 eval_declaration(t_bool(t_id(Var), Expr), Env, UpdatedEnv) :-
-    update_env(Var, Expr, Env, UpdatedEnv).
+    Expr = 'true',
+    update_env(Var, Expr, Env, UpdatedEnv);
+    Expr = 'false',
+    update_env(Var, Expr, Env, UpdatedEnv);
+    eval_expression(Expr, Expr2),
+    update_env(Var, Expr2, Env, UpdatedEnv).
 
 eval_declaration(t_bool(t_id(Var)), Env, UpdatedEnv) :-
-    update_env(Var, 0, Env, UpdatedEnv).
+    update_env(Var, 'false', Env, UpdatedEnv).
 
 eval_declaration(t_func(t_id(Var), Params, Cmds), Env, UpdatedEnv) :-
     update_env(Var, (Params, Cmds, Env), Env, UpdatedEnv).
@@ -96,6 +101,10 @@ eval_expression(t_div(Expr1, Expr2), Env, Val) :-
 eval_expression(t_id(Var), Env, Value) :-
     lookup(Var, Env, Value).
 
+eval_expression(t_not(t_id(Var)), Env, Value) :-
+    lookup(Var, Env, X),
+    toggle_boolean(X, Value).
+
 eval_expression(num(N), _, N).
 
 eval_expression(t_string(Var), Env, Value) :-
@@ -107,6 +116,23 @@ eval_expression(t_index(t_id(L), t_id(I)), Env, Result) :-
     lookup(L, Env, List),
     lookup(I, Env, num(Index)),
     nth0(Index, List, Result).
+
+eval_expression(t_and(Expr1, Expr2), Env, Result) :-
+    eval_expression(Expr1, Env, Result1),
+    eval_expression(Expr2, Env, Result2),
+    logical_and(Result1, Result2, Result).
+
+eval_expression(t_or(Expr1, Expr2), Env, Result) :-
+    eval_expression(Expr1, Env, Result1),
+    eval_expression(Expr2, Env, Result2),
+    logical_or(Result1, Result2, Result).
+
+eval_expression(t_not(Expr), Result) :-
+    eval_expression(Expr, Env), 
+    toggle_boolean(Env, Result). 
+
+eval_expression('true', 'true').
+eval_expression('false', 'false').
 
 eval_condition(t_greaterThan(t_id(X), num(Y)), Env) :-
     lookup(X, Env, ValX),
@@ -145,6 +171,19 @@ assign_params_to_env([], [], Env, Env).
 assign_params_to_env([t_id(P)|PT], [V|VT], Env, UpdatedEnv) :-
     update_env(P, V, Env, TempEnv),
     assign_params_to_env(PT, VT, TempEnv, UpdatedEnv).
+
+toggle_boolean('true', 'false').
+toggle_boolean('false', 'true').
+
+logical_and('true', 'true', 'true').
+logical_and('true', 'false', 'false').
+logical_and('false', 'true', 'false').
+logical_and('false', 'false', 'false'). 
+
+logical_or('true', 'true', 'true').
+logical_or('true', 'false', 'true').
+logical_or('false', 'true', 'true').
+logical_or('false', 'false', 'false'). 
 
 lookup(Var, [(Var, Val)|_], Val).
 lookup(Var, [_|Rest], Val) :-
