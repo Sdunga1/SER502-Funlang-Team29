@@ -1,3 +1,4 @@
+% Parser to the program
 program(t_program(K)) --> block(K).
 
 block(t_block(D)) --> declarations(D).
