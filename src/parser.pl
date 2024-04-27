@@ -18,27 +18,30 @@ declaration(t_dict(X, Y)) --> ['var'], identifier(X), ['='], dict(Y), [';'].
 commands(t_cmd(C1, C2)) --> command(C1), commands(C2).
 commands(t_cmd(C)) --> command(C).
 
-command(t_b_assign(X, Y)) --> identifier(X), ['='], boolean(b(boolValue(Y))), [';']. 
+command(t_b_assign(X, Y)) --> identifier(X), ['='], boolean((Y)), [';']. 
 command(t_assign(X,Y)) --> identifier(X), ['='], expression(Y), [';'].
 command(t_if(X, Y)) --> ['if'],['('], boolean(X), [')'], ['{'], commands(Y),['}'].
 command(t_if_else(X, Y, Z)) --> ['if'],['('], boolean(X), [')'], ['{'], commands(Y),['}'], ['else'],['{'], commands(Z),['}'].
-command(t_ternary(Cond, TrueCase, FalseCase)) --> ['('], boolean(Cond), [')'], ['?'], commands(TrueCase), [':'], commands(FalseCase), [;].
+command(t_ternary(X, C, Y, Z)) --> identifier(X), ['='], ['('], identifier(C), [')'], ['?'], expression(Y), [':'], expression(Z), [;].
 command(t_while(X,Y)) --> ['while'],['('], boolean(X), [')'], ['{'], commands(Y),['}'].
 command(t_print(X)) --> ['print'],['('], statement(X), [')'], [';'].
 command(t_for(X, Y, Z, C)) --> ['for'], ['var'], identifier(X), ['in'], ['range'], ['('], number(Y), [','], number(Z), [')'], ['{'], commands(C), ['}'].
-command(t_for_dict(X,Y, C)) --> ['for'], ['var'], identifier(X), ['in'], identifier(Y), ['{'], commands(C), ['}'].
+command(t_for_list(X,Y, C)) --> ['for'], ['var'], identifier(X), ['in'], identifier(Y), ['{'], commands(C), ['}'].
 command(t_func(X, Y)) --> ['func'], identifier(X), ['('], params(Y), [')'], [';'].
 
 statement(X) --> expression(X); boolean(X).
 
-boolean(b(boolValue(true))) --> ['true'].
-boolean(b(boolValue(false))) --> ['false'].
+boolean((true)) --> ['true'].
+boolean((false)) --> ['false'].
 boolean(t_equal(X, Y)) --> expression(X), ['=='], expression(Y).
+boolean(t_notEqual(X, Y)) --> expression(X), ['!='], expression(Y).
 boolean(t_greaterThan(X, Y)) --> expression(X), ['>'], expression(Y).
 boolean(t_greaterThanEqualTo(X, Y)) --> expression(X), ['>='], expression(Y).
 boolean(t_lessThan(X,Y)) --> expression(X), ['<'], expression(Y).
 boolean(t_lessThanEqualTo(X,Y)) --> expression(X), ['<='], expression(Y).
-boolean(t_not(X)) --> ['not'], boolean(X).
+boolean(t_not(X)) --> ['not'], statement(X).
+boolean(t_and(X, Y)) --> identifier(X), ['and'], identifier(Y).
+boolean(t_or(X, Y)) --> identifier(X), ['or'], identifier(Y).
 
 expression(t_add(X,Y)) --> identifier(X),['+'],expression(Y).
 expression(t_add(X,Y)) --> number(X),['+'],expression(Y).
@@ -65,7 +68,7 @@ list((X)) --> ['['], numbers_list(X), [']'].
 numbers_list([X]) --> expression(X).
 numbers_list([X|Xs]) --> expression(X), [','], numbers_list(Xs).
 
-dict(t_dict(X)) --> ['{'], dict_pairs(X), ['}'].
+dict((X)) --> ['{'], dict_pairs(X), ['}'].
 
 dict_pairs([X]) --> dict_pair(X).
 dict_pairs([X|Xs]) --> dict_pair(X), [','], dict_pairs(Xs).
