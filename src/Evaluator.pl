@@ -37,6 +37,10 @@ eval_declaration(t_bool(t_id(Var)), Env, UpdatedEnv) :-
 eval_declaration(t_func(t_id(Var), Params, Cmds), Env, UpdatedEnv) :-
     update_env(Var, (Params, Cmds, Env), Env, UpdatedEnv).
 
+eval_declaration(t_dict(t_id(Var), Pairs), Env, UpdatedEnv) :-
+    eval_dict_pairs(Pairs, Env, EvaluatedPairs),
+    update_env(Var, dict(EvaluatedPairs), Env, UpdatedEnv).
+
 eval_commands(t_cmd(Command), EnvIn, EnvOut) :-
     eval_command(Command, EnvIn, EnvOut).
 eval_commands(t_cmd(Command, Rest), EnvIn, EnvOut) :-
@@ -93,10 +97,20 @@ eval_command(t_ternary(t_id(Res), Cond, Expr1, Expr2), EnvIn, EnvOut) :-
     eval_expression(Expr2, EnvIn, Value2),
     update_env(Res, Value2, EnvIn, EnvOut).
 
+eval_command(t_for_list(t_id(X), t_id(Y), Cmds), EnvIn, EnvOut) :-
+    lookup(Y, EnvIn, Collection),
+    loop_through_collection(Collection, X, Cmds, EnvIn, EnvOut).
+
 eval_expression(t_add(Expr1, Expr2), Env, Val) :-
     eval_expression(Expr1, Env, Val1),
     eval_expression(Expr2, Env, Val2),
-    Val is Val1 + Val2.
+    (   (number(Val1), number(Val2)),
+        Val is Val1 + Val2;
+    (   (string(Val1), string(Val2)),
+        string_concat(Val1, Val2, Val);  
+        atom_concat(Val1, Val2, Val)    
+        )
+    ).
 
 eval_expression(t_sub(Expr1, Expr2), Env, Val) :-
     eval_expression(Expr1, Env, Val1),
@@ -141,6 +155,16 @@ eval_expression(t_or(Expr1, Expr2), Env, Result) :-
     eval_expression(Expr1, Env, Result1),
     eval_expression(Expr2, Env, Result2),
     logical_or(Result1, Result2, Result).
+
+eval_expression(t_index(t_id(Dict), KeyExpr), Env, Value) :-
+    lookup(Dict, Env, dict(Pairs)),
+    eval_expression(KeyExpr, Env, Key),
+    dict_lookup(Key, Pairs, Value).
+
+dict_lookup(Key, [(Key, Value) | _], Value) :- !.
+dict_lookup(Key, [_ | Rest], Value) :-
+    dict_lookup(Key, Rest, Value).
+
 
 eval_expression(t_not(Expr), Result) :-
     eval_expression(Expr, Env), 
@@ -215,6 +239,22 @@ logical_or('true', 'true', 'true').
 logical_or('true', 'false', 'true').
 logical_or('false', 'true', 'true').
 logical_or('false', 'false', 'false'). 
+
+eval_dict_pairs([], _, []).
+eval_dict_pairs([t_pair(Key, Value) | Rest], Env, [(EvalKey, EvalValue) | EvaluatedRest]) :-
+    eval_expression(Key, Env, EvalKey),
+    eval_expression(Value, Env, EvalValue),
+    eval_dict_pairs(Rest, Env, EvaluatedRest).
+
+loop_through_collection(dict(Pairs), X, Cmds, EnvIn, EnvOut) :-
+    loop_through_dict_keys(Pairs, X, Cmds, EnvIn, EnvOut).
+
+loop_through_dict_keys([], _, _, Env, Env). 
+loop_through_dict_keys([(Key, _) | Rest], X, Cmds, EnvIn, EnvOut) :-
+    update_env(X, Key, EnvIn, NewEnv),
+    eval_commands(Cmds, NewEnv, TempEnv),
+    loop_through_dict_keys(Rest, X, Cmds, TempEnv, EnvOut).
+
 
 lookup(Var, [(Var, Val)|_], Val).
 lookup(Var, [_|Rest], Val) :-
