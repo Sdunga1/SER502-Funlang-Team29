@@ -93,6 +93,11 @@ eval_expression(t_div(Expr1, Expr2), Env, Val) :-
     eval_expression(Expr2, Env, Val2),
     (Val2 =:= 0; Val is Val1 / Val2).
 
+eval_expression(t_div(Expr1, Expr2), Env, Val) :-
+    eval_expression(Expr1, Env, Val1),
+    eval_expression(Expr2, Env, Val2),
+    (Val2 =:= 0 -> throw(division_by_zero); Val is Val1 / Val2).
+
 eval_expression(t_id(Var), Env, Value) :-
     lookup(Var, Env, Value).
 
