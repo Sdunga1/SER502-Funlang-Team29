@@ -85,6 +85,14 @@ eval_command(t_func(t_id(FuncName), ArgExpressions), EnvIn, EnvOut) :-
 eval_command(t_while(Cond, Cmds), EnvIn, EnvOut) :-
     eval_while(Cond, Cmds, EnvIn, EnvOut).
 
+eval_command(t_ternary(t_id(Res), Cond, Expr1, Expr2), EnvIn, EnvOut) :-
+    eval_condition(Cond, EnvIn),
+    !,
+    eval_expression(Expr1, EnvIn, Value1),
+    update_env(Res, Value1, EnvIn, EnvOut);
+    eval_expression(Expr2, EnvIn, Value2),
+    update_env(Res, Value2, EnvIn, EnvOut).
+
 eval_expression(t_add(Expr1, Expr2), Env, Val) :-
     eval_expression(Expr1, Env, Val1),
     eval_expression(Expr2, Env, Val2),
