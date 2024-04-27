@@ -26,7 +26,7 @@ command(t_ternary(Cond, TrueCase, FalseCase)) --> ['('], boolean(Cond), [')'], [
 command(t_while(X,Y)) --> ['while'],['('], boolean(X), [')'], ['{'], commands(Y),['}'].
 command(t_print(X)) --> ['print'],['('], statement(X), [')'], [';'].
 command(t_for(X, Y, Z, C)) --> ['for'], ['var'], identifier(X), ['in'], ['range'], ['('], number(Y), [','], number(Z), [')'], ['{'], commands(C), ['}'].
-command(t_for_dict(X,Y, C)) --> ['for'], ['var'], identifier(X), ['in'], identifier(Y), ['{'], commands(C), ['}'].
+command(t_for_list(X,Y, C)) --> ['for'], ['var'], identifier(X), ['in'], identifier(Y), ['{'], commands(C), ['}'].
 command(t_func(X, Y)) --> ['func'], identifier(X), ['('], params(Y), [')'], [';'].
 
 statement(X) --> expression(X); boolean(X).
@@ -54,7 +54,6 @@ expression(t_div(X,Y)) --> number(X),['/'],expression(Y).
 expression(t_index(L, I)) --> identifier(L), ['['], expression(I), [']'].
 expression(X) --> identifier(X).
 expression(X) --> number(X).
-%expression(X) --> ['"'], string_literal(X), ['"'].
 expression(X) --> ['('], expression(X), [')'].
 
 string_literal(t_string(X)) --> string_chars(L), { atomics_to_string(L, ' ', X) }.

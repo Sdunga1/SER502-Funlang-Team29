@@ -72,11 +72,18 @@ eval_command(t_for(t_id(X), num(Start), num(End), Cmds), EnvIn, EnvOut) :-
     	EnvOut = EnvIn 
     ).
 
+eval_command(t_for_list(t_id(X), t_id(Y), Cmds), EnvIn, EnvOut) :-
+    lookup(Y, EnvIn, List), 
+    loop_through_list(List, X, Cmds, EnvIn, EnvOut).
+
 eval_command(t_func(t_id(FuncName), ArgExpressions), EnvIn, EnvOut) :-
     lookup(FuncName, EnvIn, (Params, Cmds, ClosureEnv)),
     eval_arg_expressions(ArgExpressions, EnvIn, ArgValues),
     assign_params_to_env(Params, ArgValues, ClosureEnv, NewEnv),
-    eval_commands(Cmds, NewEnv, EnvOut).
+    eval_commands(Cmds, NewEnv, EnvOut).  
+
+eval_command(t_while(Cond, Cmds), EnvIn, EnvOut) :-
+    eval_while(Cond, Cmds, EnvIn, EnvOut).
 
 eval_expression(t_add(Expr1, Expr2), Env, Val) :-
     eval_expression(Expr1, Env, Val1),
@@ -164,6 +171,19 @@ eval_list([], _, []).
 eval_list([H|T], Env, [HVal|TVal]) :-
     eval_expression(H, Env, HVal),
     eval_list(T, Env, TVal).
+
+loop_through_list([], _, _, Env, Env). 
+loop_through_list([H|T], X, Cmds, EnvIn, EnvOut) :-
+    update_env(X, H, EnvIn, NewEnv), 
+    eval_commands(Cmds, NewEnv, TempEnv), 
+    loop_through_list(T, X, Cmds, TempEnv, EnvOut).  
+
+eval_while(Cond, Cmds, EnvIn, EnvOut) :-
+    eval_condition(Cond, EnvIn), 
+    !,
+    eval_commands(Cmds, EnvIn, EnvMid),
+    eval_while(Cond, Cmds, EnvMid, EnvOut);
+    EnvOut = EnvIn.
 
 eval_arg_expressions([], _, []).
 eval_arg_expressions([H|T], Env, [HVal|TVal]) :-
