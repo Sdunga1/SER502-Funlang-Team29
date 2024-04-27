@@ -59,6 +59,10 @@ eval_command(t_print(Expr), Env, Env) :-
     print(Value),
     format("~n").
 
+eval_command(t_if(Cond, Cmd), Env, Val) :-
+    eval_condition(Cond, Env),
+    eval_commands(Cmd, Env, Val).
+
 eval_command(t_if_else(Cond, True, _), Env, Val) :-
     eval_condition(Cond, Env),
     eval_commands(True, Env, Val).
