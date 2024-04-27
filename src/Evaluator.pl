@@ -73,6 +73,10 @@ eval_command(t_func(t_id(FuncName), ArgExpressions), EnvIn, EnvOut) :-
     assign_params_to_env(Params, ArgValues, ClosureEnv, NewEnv),
     eval_commands(Cmds, NewEnv, EnvOut).
 
+eval_command(t_func(t_id(FuncName), _), EnvIn, _) :-
+    \+ lookup(FuncName, EnvIn, _),
+    throw(undefined_function(FuncName)).
+
 eval_expression(t_add(Expr1, Expr2), Env, Val) :-
     eval_expression(Expr1, Env, Val1),
     eval_expression(Expr2, Env, Val2),
@@ -93,6 +97,11 @@ eval_expression(t_div(Expr1, Expr2), Env, Val) :-
     eval_expression(Expr2, Env, Val2),
     (Val2 =:= 0; Val is Val1 / Val2).
 
+eval_expression(t_div(Expr1, Expr2), Env, Val) :-
+    eval_expression(Expr1, Env, Val1),
+    eval_expression(Expr2, Env, Val2),
+    (Val2 =:= 0 -> throw(division_by_zero); Val is Val1 / Val2).
+
 eval_expression(t_id(Var), Env, Value) :-
     lookup(Var, Env, Value).
 
@@ -107,6 +116,14 @@ eval_expression(t_index(t_id(L), t_id(I)), Env, Result) :-
     lookup(L, Env, List),
     lookup(I, Env, num(Index)),
     nth0(Index, List, Result).
+
+eval_expression(t_index(t_id(L), t_id(I)), Env, Result) :-
+    lookup(L, Env, List),
+    lookup(I, Env, num(Index)),
+    (   nth0(Index, List, Result)
+    ->  true
+    ;   throw(index_out_of_range(Index, List))
+    ).
 
 eval_condition(t_greaterThan(t_id(X), num(Y)), Env) :-
     lookup(X, Env, ValX),
@@ -149,6 +166,8 @@ assign_params_to_env([t_id(P)|PT], [V|VT], Env, UpdatedEnv) :-
 lookup(Var, [(Var, Val)|_], Val).
 lookup(Var, [_|Rest], Val) :-
     lookup(Var, Rest, Val).
+lookup(Var, [], _) :-
+    throw(undefined_variable(Var)).
 
 update_env(Var, NewVal, [], [(Var, NewVal)]).
 update_env(Var, NewVal, [(Var, _)|Rest], [(Var, NewVal)|Rest]).

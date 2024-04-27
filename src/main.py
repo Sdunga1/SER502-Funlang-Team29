@@ -1,5 +1,5 @@
 from pyswip import Prolog
-from tokenize import *
+from tokenizeUpdated import *
 
 def generate_parse_tree(filename):
     code = read_from_file(filename)
