@@ -20,8 +20,8 @@ commands(t_cmd(C)) --> command(C).
 
 command(t_b_assign(X, Y)) --> identifier(X), ['='], boolean((Y)), [';']. 
 command(t_assign(X,Y)) --> identifier(X), ['='], expression(Y), [';'].
-command(t_if(X, Y)) --> ['if'],['('], boolean(X), [')'], ['{'], commands(Y),['}'].
-command(t_if_else(X, Y, Z)) --> ['if'],['('], boolean(X), [')'], ['{'], commands(Y),['}'], ['else'],['{'], commands(Z),['}'].
+command(t_if(X, Y)) --> ['if'],['('], statement(X), [')'], ['{'], commands(Y),['}'].
+command(t_if_else(X, Y, Z)) --> ['if'],['('], statement(X), [')'], ['{'], commands(Y),['}'], ['else'],['{'], commands(Z),['}'].
 command(t_ternary(X, C, Y, Z)) --> identifier(X), ['='], ['('], identifier(C), [')'], ['?'], expression(Y), [':'], expression(Z), [;].
 command(t_while(X,Y)) --> ['while'],['('], boolean(X), [')'], ['{'], commands(Y),['}'].
 command(t_print(X)) --> ['print'],['('], statement(X), [')'], [';'].

@@ -203,6 +203,9 @@ eval_condition(t_notEqual(t_id(X), num(Y)), Env) :-
 eval_condition(t_not(Cond), Env) :-
     \+ eval_condition(Cond, Env).
 
+eval_condition(t_id(X), Env) :-
+    lookup(X, _, Env).
+
 eval_list([], _, []).
 eval_list([H|T], Env, [HVal|TVal]) :-
     eval_expression(H, Env, HVal),
