@@ -73,6 +73,10 @@ eval_command(t_func(t_id(FuncName), ArgExpressions), EnvIn, EnvOut) :-
     assign_params_to_env(Params, ArgValues, ClosureEnv, NewEnv),
     eval_commands(Cmds, NewEnv, EnvOut).
 
+eval_command(t_func(t_id(FuncName), _), EnvIn, _) :-
+    \+ lookup(FuncName, EnvIn, _),
+    throw(undefined_function(FuncName)).
+
 eval_expression(t_add(Expr1, Expr2), Env, Val) :-
     eval_expression(Expr1, Env, Val1),
     eval_expression(Expr2, Env, Val2),
