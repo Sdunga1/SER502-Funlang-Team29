@@ -1,3 +1,5 @@
+% Evaluator of the parser of the program.
+% Major functionalities of the environment - LOOKUP and Updated
 program_eval(t_program(Block), EnvIn) :-
     eval_block(Block, EnvIn, _).
 
@@ -5,6 +7,7 @@ eval_block(t_block(Decls, Cmds), EnvIn, EnvOut) :-
     eval_declarations(Decls, EnvIn, EnvMid),
     eval_commands(Cmds, EnvMid, EnvOut).
 
+% Evaluation of declarations
 eval_declarations(t_decl(Decls), EnvIn, EnvOut) :-
     eval_declaration(Decls, EnvIn, EnvOut).
 
@@ -41,6 +44,7 @@ eval_declaration(t_dict(t_id(Var), Pairs), Env, UpdatedEnv) :-
     eval_dict_pairs(Pairs, Env, EvaluatedPairs),
     update_env(Var, dict(EvaluatedPairs), Env, UpdatedEnv).
 
+% Evaluation of commands
 eval_commands(t_cmd(Command), EnvIn, EnvOut) :-
     eval_command(Command, EnvIn, EnvOut).
 eval_commands(t_cmd(Command, Rest), EnvIn, EnvOut) :-
@@ -93,6 +97,7 @@ eval_command(t_func(t_id(FuncName), ArgExpressions), EnvIn, EnvOut) :-
 eval_command(t_while(Cond, Cmds), EnvIn, EnvOut) :-
     eval_while(Cond, Cmds, EnvIn, EnvOut).
 
+% Evaluating the ternary operation
 eval_command(t_ternary(t_id(Res), Cond, Expr1, Expr2), EnvIn, EnvOut) :-
     eval_condition(Cond, EnvIn),
     !,
@@ -105,6 +110,7 @@ eval_command(t_for_list(t_id(X), t_id(Y), Cmds), EnvIn, EnvOut) :-
     lookup(Y, EnvIn, Collection),
     loop_through_collection(Collection, X, Cmds, EnvIn, EnvOut).
 
+% Evaluating the operations on expressions
 eval_expression(t_add(Expr1, Expr2), Env, Val) :-
     eval_expression(Expr1, Env, Val1),
     eval_expression(Expr2, Env, Val2),
@@ -206,6 +212,7 @@ eval_condition(t_not(Cond), Env) :-
 eval_condition(t_id(X), Env) :-
     lookup(X, _, Env).
 
+% Evaluating and traversing the lists
 eval_list([], _, []).
 eval_list([H|T], Env, [HVal|TVal]) :-
     eval_expression(H, Env, HVal),
@@ -234,6 +241,7 @@ assign_params_to_env([t_id(P)|PT], [V|VT], Env, UpdatedEnv) :-
     update_env(P, V, Env, TempEnv),
     assign_params_to_env(PT, VT, TempEnv, UpdatedEnv).
 
+% Evaluate for toggle, logical and and logical or
 toggle_boolean('true', 'false').
 toggle_boolean('false', 'true').
 
@@ -247,12 +255,14 @@ logical_or('true', 'false', 'true').
 logical_or('false', 'true', 'true').
 logical_or('false', 'false', 'false'). 
 
+% Evaluate dictionary pairs
 eval_dict_pairs([], _, []).
 eval_dict_pairs([t_pair(Key, Value) | Rest], Env, [(EvalKey, EvalValue) | EvaluatedRest]) :-
     eval_expression(Key, Env, EvalKey),
     eval_expression(Value, Env, EvalValue),
     eval_dict_pairs(Rest, Env, EvaluatedRest).
 
+% Traverse over collection
 loop_through_collection(dict(Pairs), X, Cmds, EnvIn, EnvOut) :-
     loop_through_dict_keys(Pairs, X, Cmds, EnvIn, EnvOut).
 
@@ -262,11 +272,12 @@ loop_through_dict_keys([(Key, _) | Rest], X, Cmds, EnvIn, EnvOut) :-
     eval_commands(Cmds, NewEnv, TempEnv),
     loop_through_dict_keys(Rest, X, Cmds, TempEnv, EnvOut).
 
-
+% Evaluate for lookup operation on Environment
 lookup(Var, [(Var, Val)|_], Val).
 lookup(Var, [_|Rest], Val) :-
     lookup(Var, Rest, Val).
 
+% Evaluate for update operation on Environment
 update_env(Var, NewVal, [], [(Var, NewVal)]).
 update_env(Var, NewVal, [(Var, _)|Rest], [(Var, NewVal)|Rest]).
 update_env(Var, NewVal, [(Var2, Val2)|Rest], [(Var2, Val2)|UpdatedRest]) :-

@@ -1,0 +1,5 @@
+var myList = [1,22,45,78,23];
+for var i in range(0,5)
+{
+print(myList[i]);
+}
