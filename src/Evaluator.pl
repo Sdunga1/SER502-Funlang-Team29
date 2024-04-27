@@ -154,6 +154,8 @@ assign_params_to_env([t_id(P)|PT], [V|VT], Env, UpdatedEnv) :-
 lookup(Var, [(Var, Val)|_], Val).
 lookup(Var, [_|Rest], Val) :-
     lookup(Var, Rest, Val).
+lookup(Var, [], _) :-
+    throw(undefined_variable(Var)).
 
 update_env(Var, NewVal, [], [(Var, NewVal)]).
 update_env(Var, NewVal, [(Var, _)|Rest], [(Var, NewVal)|Rest]).
