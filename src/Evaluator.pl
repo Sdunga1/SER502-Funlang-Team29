@@ -57,10 +57,10 @@ eval_command(t_print(Expr), Env, Env) :-
 
 eval_command(t_if_else(Cond, True, _), Env, Val) :-
     eval_condition(Cond, Env),
-    eval_commands(True, Env, Val); !.
+    eval_commands(True, Env, Val).
 eval_command(t_if_else(Cond, _, False), Env, Val) :-
     \+ eval_condition(Cond, Env),
-    eval_commands(False, Env, Val); !.
+    eval_commands(False, Env, Val).
 
 eval_command(t_for(t_id(X), num(Start), num(End), Cmds), EnvIn, EnvOut) :-
     StartIndex is Start,
@@ -153,6 +153,9 @@ eval_condition(t_lessThanEqualTo(t_id(X), num(Y)), Env) :-
 eval_condition(t_equal(t_id(X), num(Y)), Env) :-
     lookup(X, Env, ValX),
     ValX == Y.
+eval_condition(t_notEqual(t_id(X), num(Y)), Env) :-
+    lookup(X, Env, ValX),
+    ValX \= Y.
 
 eval_condition(t_not(Cond), Env) :-
     \+ eval_condition(Cond, Env).

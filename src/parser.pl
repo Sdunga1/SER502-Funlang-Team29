@@ -34,6 +34,7 @@ statement(X) --> expression(X); boolean(X).
 boolean((true)) --> ['true'].
 boolean((false)) --> ['false'].
 boolean(t_equal(X, Y)) --> expression(X), ['=='], expression(Y).
+boolean(t_notEqual(X, Y)) --> expression(X), ['!='], expression(Y).
 boolean(t_greaterThan(X, Y)) --> expression(X), ['>'], expression(Y).
 boolean(t_greaterThanEqualTo(X, Y)) --> expression(X), ['>='], expression(Y).
 boolean(t_lessThan(X,Y)) --> expression(X), ['<'], expression(Y).
