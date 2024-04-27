@@ -117,6 +117,14 @@ eval_expression(t_index(t_id(L), t_id(I)), Env, Result) :-
     lookup(I, Env, num(Index)),
     nth0(Index, List, Result).
 
+eval_expression(t_index(t_id(L), t_id(I)), Env, Result) :-
+    lookup(L, Env, List),
+    lookup(I, Env, num(Index)),
+    (   nth0(Index, List, Result)
+    ->  true
+    ;   throw(index_out_of_range(Index, List))
+    ).
+
 eval_condition(t_greaterThan(t_id(X), num(Y)), Env) :-
     lookup(X, Env, ValX),
     ValX > Y.
