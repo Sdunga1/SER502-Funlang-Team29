@@ -1,0 +1,21 @@
+var string = "This is a string assigned to a variable.";
+var testConditional = "The condition is true";
+var val = 5;
+bool cond = false;
+
+
+while(val>0)
+{
+    if(val == 2)
+    {
+        if(cond)
+        {
+            print(testConditional);
+        }
+    }
+    else{
+        print(val);
+    }
+    
+    val = val - 1;
+}
