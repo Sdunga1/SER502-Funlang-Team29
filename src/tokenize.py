@@ -16,7 +16,11 @@ def tokenize_code(code):
         ('SQUARE_CLOSE', r'\]'),
         ('COMMA', r','),
         ('COLON', r':'),
-        ('GTHAN', r'>=') ## do the rest <=, <, >, etc.!!!
+        ('GTHAN', r'>='),
+        ('LT', r'<'),
+        ('GT', r'>'),
+        ('EQUAL', r'=='),
+        ('NEQUAL', r'!=')
     ]
 
     patterns = '|'.join(f'(?P<{name}>{pattern})' for name, pattern in token_patterns)
