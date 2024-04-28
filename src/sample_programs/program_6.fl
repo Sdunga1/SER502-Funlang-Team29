@@ -1,0 +1,7 @@
+var res;
+var temp = 1;
+var anotherTemp = 2;
+bool cond = 'true';
+
+res = (cond) ? temp + temp : anotherTemp + anotherTemp;
+print(res);
