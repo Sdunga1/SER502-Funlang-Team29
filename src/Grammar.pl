@@ -1,9 +1,11 @@
+% Grammar of FUNLANG
 S -> program
 program -> block
 
 block -> declarations 
        | declarations commands
 
+% declaration grammar
 declarations  -> declaration declarations
                | declaration
 
@@ -25,6 +27,7 @@ list_declaration -> "var" identifier "=" list ";"
 func_declaration -> "func" identifier "(" params ")" "{" commands "}"
 dict_declaration -> "var" identifier "=" dict ";"
 
+% Multi-line commands grammar
 commands -> command commands
           | command
 
@@ -49,9 +52,11 @@ print_statement -> "print" "(" statement ")" ";"
 for_range_statement -> "for" "var" identifier "in" "range" "(" number "," number ")" "{" commands "}"
 for_list_statement -> "for" "var" identifier "in" identifier "{" commands "}"
 
+% Statement Grammar
 statement -> expression
            | boolean
 
+% Grammar for boolean
 boolean -> 'true'
          | 'false'
          | expression '==' expression
@@ -64,6 +69,7 @@ boolean -> 'true'
          | identifier 'and' identifier
          | identifier 'or' identifier
 
+% Grammar of expression
 expression -> identifier '+' expression
             | number '+' expression
             | identifier '-' expression
@@ -77,10 +83,11 @@ expression -> identifier '+' expression
             | number
             | '(' expression ')'
 
-string_literal -> '"' string_chars '"'
+S -> string_literal
+string_literal -> string_chars, { atomics_to_string(L, ' ', X) }
 
-string_chars -> character
-              | string_chars character
+string_chars([X|Xs]) -> [X], string_chars(Xs), { X = '"' } | []
+string_chars([]) -> []
 
 params -> identifier
         | number
@@ -104,17 +111,17 @@ dict_value -> number
 
 quoted_string -> '"' inner_quoted_chars '"'
 
-inner_quoted_chars --> quoted_chars, { atomics_to_string(Y, '', X) }.
+inner_quoted_chars --> quoted_chars, { atomics_to_string(Y, '', X) }
 
-/*
-quoted_chars([X|Xs]) --> [X], { X \= '"'}, quoted_chars(Xs).
-quoted_chars([]) --> [].
+quoted_chars([X|Xs]) -> [X], quoted_chars(Xs), { X = '"' }
+quoted_chars([]) -> []
 
-identifier(X) --> ['"'], string_literal(X), ['"'].
-identifier(t_id(Id)) --> [A], { atom(A), atom_chars(A, C), all_alpha(C), atom_concat('', A, Id) }.
-all_alpha([]).
-all_alpha([H|T]) :- char_type(H, alpha), all_alpha(T).
-*/
+% Terminals Grammar
+identifier -> ['"'], string_literal, ['"']
+identifier -> [A], { atom(A), atom_chars(A, C), all_alpha(C), atom_concat('', A, Id) }
+
+all_alpha([]) -> []
+all_alpha([H|T]) -> char_type(H, alpha), all_alpha(T)
 
 digit -> [D], { D >= 0, D =< 9 }
 number -> num(N), { atom(N) }
