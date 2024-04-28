@@ -5,6 +5,7 @@ def tokenize_code(code):
         ('VAR', r'\bvar\b'),
         ('IDENTIFIER', r'\b[a-zA-Z_]\w*\b'),
         ('NUMBER', r'\b\d+\b'),
+        ('EQUAL', r'=='),        
         ('OPERATOR', r'[+\-*/=]'),
         ('SEMICOLON', r';'),
         ('LPAREN', r'\('),
@@ -16,11 +17,12 @@ def tokenize_code(code):
         ('SQUARE_CLOSE', r'\]'),
         ('COMMA', r','),
         ('COLON', r':'),
-        ('GTHAN', r'>='),
+        ('LEQUAL', r'<='),
+        ('GEQUAL', r'>='),
         ('LT', r'<'),
         ('GT', r'>'),
-        ('EQUAL', r'=='),
-        ('NEQUAL', r'!=')
+        ('NEQUAL', r'!='),
+        ('TERNARY', r'\?')
     ]
 
     patterns = '|'.join(f'(?P<{name}>{pattern})' for name, pattern in token_patterns)
@@ -44,7 +46,7 @@ def read_from_file(filename):
 
 # Testing
 if __name__ == "__main__":
-    
+
     filename = 'sample_programs/program_1.fl' 
     code = read_from_file(filename)
 
@@ -60,13 +62,11 @@ if __name__ == "__main__":
     filename = 'sample_programs/program_3.fl' 
     code = read_from_file(filename)
 
-
     tokens = tokenize_code(code)
     print('\nTokens for program_3: ', tokens)
 
     filename = 'sample_programs/program_4.fl' 
     code = read_from_file(filename)
-
 
     tokens = tokenize_code(code)
     print('\nTokens for program_4: ', tokens)
@@ -77,3 +77,8 @@ if __name__ == "__main__":
     tokens = tokenize_code(code)
     print('\nTokens for program_5: ', tokens)
 
+    filename = 'sample_programs/program_8.fl' 
+    code = read_from_file(filename)
+
+    tokens = tokenize_code(code)
+    print('\nTokens for program_6: ', tokens)
