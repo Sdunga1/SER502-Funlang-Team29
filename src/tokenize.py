@@ -1,4 +1,5 @@
 import re
+import sys
 
 def tokenize_code(code):
     token_patterns = [
@@ -46,39 +47,26 @@ def read_from_file(filename):
 
 # Testing
 if __name__ == "__main__":
+    # Check if filename is provided as an argument
+    if len(sys.argv) != 2:
+        print("Usage: python tokenizer.py <filename>")
+        sys.exit(1)
 
-    filename = 'sample_programs/program_1.fl' 
-    code = read_from_file(filename)
-
-    tokens = tokenize_code(code)
-    print('\nTokens for program_1: ', tokens)
-
-    filename = 'sample_programs/program_2.fl' 
-    code = read_from_file(filename)
-
-    tokens = tokenize_code(code)
-    print('\nTokens for program_2: ', tokens)
-
-    filename = 'sample_programs/program_3.fl' 
-    code = read_from_file(filename)
-
-    tokens = tokenize_code(code)
-    print('\nTokens for program_3: ', tokens)
-
-    filename = 'sample_programs/program_4.fl' 
-    code = read_from_file(filename)
-
-    tokens = tokenize_code(code)
-    print('\nTokens for program_4: ', tokens)
-
-    filename = 'sample_programs/program_5.fl' 
-    code = read_from_file(filename)
-
-    tokens = tokenize_code(code)
-    print('\nTokens for program_5: ', tokens)
-
-    filename = 'sample_programs/program_8.fl' 
-    code = read_from_file(filename)
-
-    tokens = tokenize_code(code)
-    print('\nTokens for program_6: ', tokens)
+    filename = sys.argv[1]
+    
+    try:
+        # Read code from file
+        code = read_from_file(filename)
+        
+        # Tokenize the code
+        tokens = tokenize_code(code)
+        
+        # Print tokens
+        print(tokens,end="")
+        
+    except FileNotFoundError:
+        print(f"Error: File '{filename}' not found.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        sys.exit(1)

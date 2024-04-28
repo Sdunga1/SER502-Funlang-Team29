@@ -1,0 +1,8 @@
+bool negative =  false;
+bool positive =  true;
+bool res;
+res = positive or negative;
+if(res)
+{
+    print(positive);
+}

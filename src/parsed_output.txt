@@ -1,0 +1,1 @@
+t_program(t_block(t_decl(t_bool(t_id(negative),false),t_decl(t_bool(t_id(positive),true),t_decl(t_bool(t_id(res))))),t_cmd(t_b_assign(t_id(res),t_or(t_id(positive),t_id(negative))),t_cmd(t_if(t_id(res),t_cmd(t_print(t_id(positive))))))))

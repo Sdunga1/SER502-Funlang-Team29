@@ -7,14 +7,12 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # Tokenize the code
-tokens=$(python3 tokenizer.py "$1")
+tokens=$(python3 tokenize.py "$1")
 
 # Run the parser and save the parsed output
-parsed_output=$(swipl -q -s parser.pl -g "phrase(program(Program), $tokens), writeq(Program), halt." -t "halt.")
-
+parsed_output=$(swipl -q -s parser.pl -g "phrase(program(Program), $tokens), writeq(Program), halt." -t "halt.") 
 # Run the evaluator on the parsed output
-evaluation_result=$(swipl -q -s Evaluator.pl -g "program_eval($parsed_output, []), halt." -t "halt.")
-
+evaluation_result=$(swipl -q -s Evaluator.pl -g "program_eval($parsed_output, []), halt." -t "halt.") 
 
 # Display the evaluation result
 echo "$evaluation_result"
