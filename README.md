@@ -17,7 +17,7 @@ MacOS (Need to install Homebrew):
 
 ```homebrew install swi-prolog```
 
-Python: refer to https://www.python.org/downloads/
+Python: refer to ```https://www.python.org/downloads/```
 
 # **Src folder elements:**
 - grammar.pl: grammar for Funlang
