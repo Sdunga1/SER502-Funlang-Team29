@@ -17,3 +17,16 @@ Parsing Techniques and Tools, Data Structures:- Sarath, William, Sultan
 Design:- Sultan, William
 Compilation and Running environment:- Sultan, William
 Sample Programs, Darsh, Jinesh, Sarath, William
+
+During the video presentation:-
+Darsh:- Explained the basic introduction and the entire backend logic(flow) of the programming language.
+Sarath:- Explained in detail the design components and language features along with the grammar.
+Sultan:- Explained the parse tree, evaluator along with the code.
+Jinesh:- Explained the run time and showed the demonstration and working of the programming language.
+William:- Said concluding remarks and suggested potential future scope.
+
+All team members contributed to the designing, coding, and implementation of the entire project.
+
+
+
+
