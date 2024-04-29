@@ -13,12 +13,13 @@ TOOLS that are used:
 
 # **Instructions/Steps** to install:**
 
-MacOS (Need to install Homebrew)
+MacOS (Need to install Homebrew):
 
 ```homebrew install swi-prolog```
 
-Instructions/Steps to build (compile) and run the language(runtime):
-# **One liner Bash script to build the compiler:**
+Python: refer to https://www.python.org/downloads/
+
+# **One liner Bash script to invoke the compiler & interpreter:**
 ```./run_program.sh <file-path>/<file-name>```
 
 # **Language Features**
