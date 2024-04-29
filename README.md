@@ -19,7 +19,14 @@ MacOS (Need to install Homebrew):
 
 Python: refer to https://www.python.org/downloads/
 
-# **One liner Bash script to invoke the compiler & interpreter:**
+# **Src folder elements:**
+- grammar.pl: grammar for Funlang
+- tokenize.py: takes Funlang source code as input and generates a list of tokenized code with special characaters as seperate tokens
+- parser.pl: takes a list of Funlang tokenized code as input and generates an appropriate parsed tree based on our grammar
+- Evaluator.pl: takes a parsed Funlang program tree as input and evaluates the program
+- run_program.sh: one liner bash script to invoke the parser and evaluator
+
+# **How to run the one liner bash script:**
 ```./run_program.sh <file-path>/<file-name>```
 
 # **Language Features**
